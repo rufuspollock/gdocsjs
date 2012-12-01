@@ -1,0 +1,82 @@
+<html>
+<body>
+
+<script type="text/javascript">
+// First, parse the query string
+var params = {},
+    queryString = location.search.substring(1),
+    regex = /([^&=]+)=([^&]*)/g, m;
+while (m = regex.exec(queryString)) {
+  params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+}
+console.log(params);
+
+if (params.accessToken) {
+  var payload = {
+    title: 'My new spreadsheet via the API',
+    csv: 'A,B,C\n,1,2,3',
+  }
+  createSpreadsheet(payload, params.accessToken);
+}
+
+function createSpreadsheet(payload, accessToken) {
+  // remove trailing colons from slug as this will result in error due to
+  // http://code.google.com/a/google.com/p/apps-api-issues/issues/detail?id=2136
+  var title = payload.title || '';
+  var slug = encodeURIComponent(title.replace(/[:]+\s*$/,''));
+  var request = {
+    'method': 'POST',
+    'headers': {
+      'GData-Version': '3.0',
+      'Content-Type': 'text/csv',
+      'Slug': slug,
+      'Authorization': 'Bearer ' + accessToken
+    },
+    'parameters': {
+      'alt': 'json'
+    },
+    'body': payload.csv
+  };
+  request.url = 'https://docs.google.com/feeds/default/private/full';
+
+  var callback = function(response, xhr) {
+    console.log(xhr);
+    console.log(response);
+    if (xhr.status == 401) {
+      console.log({error: 'Google authentication failed. Please try exporting again, and you will be re-authenticated.'});
+    } else if (xhr.status - 200 < 100) {
+      try {
+        console.log('========= Response');
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      console.error('Received an unexpected response.\n\n' + response);
+      console.log(response);
+    }
+  };
+  sendRequest(request, callback);
+}
+
+function sendRequest(request, callback) {
+ var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function(data) {
+    if (xhr.readyState == 4) {
+      callback(xhr.responseText, xhr);
+    }
+  }
+  console.log(request.url);
+  xhr.open(request.method, request.url, true);
+  if (request.headers) {
+    for (var header in request.headers) {
+      if (request.headers.hasOwnProperty(header)) {
+        xhr.setRequestHeader(header, request.headers[header]);
+      }
+    }
+  }
+  xhr.send(request.body);
+}
+</script>
+</body>
+</html>

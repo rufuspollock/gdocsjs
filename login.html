@@ -1,0 +1,20 @@
+<html>
+<body>
+<p>Click on the authorization link and then when you are redirected back here check your console for output</p>
+<a href="https://accounts.google.com/o/oauth2/auth?response_type=token&scope=https://spreadsheets.google.com/feeds+https://docs.google.com/feeds&redirect_uri=http://localhost/src/gdocsjs/login.html&client_id=994484998264.apps.googleusercontent.com">Click here to authorize</a>
+
+<div id="info">Access token: <span id="token"></span></div>
+
+<script type="text/javascript">
+// First, parse the query string
+var params = {}, queryString = location.hash.substring(1),
+    regex = /([^&=]+)=([^&]*)/g, m;
+while (m = regex.exec(queryString)) {
+  params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+}
+console.log(params);
+var span = document.getElementById('token');
+span.innerText = params.access_token;
+</script>
+</body>
+</html>
