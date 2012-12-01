@@ -2,7 +2,14 @@ Experiments with using Google Docs from pure Javascript.
 
 ## Accessing the Spreadsheets API
 
-Have some code in spreadsheet.html but the problem is CORS - Google GData API does not support CORS AFAICT.
+Have some code in spreadsheet.html but the problem is CORS - Google GData API
+does not support CORS AFAICT. Given this various options:
+
+* Create a CORS proxy - e.g. a simple piece of backend code to forward requests back and forth
+* Move to a Chrome Extension
+* Do not bother with write ...
+
+Links:
 
 * <https://developers.google.com/google-apps/spreadsheets/#creating_a_spreadsheet>
 * <https://developers.google.com/google-apps/documents-list/#creating_or_uploading_spreadsheets>
